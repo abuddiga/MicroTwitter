@@ -3,16 +3,22 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.1'
+# gem 'pg'
 
 # Use sqlite3 for development only
 group :development, :test do
     gem 'sqlite3'
     gem 'rspec-rails'
+    gem 'guard-rspec'
+    gem 'spork-rails'
+    gem 'guard-spork'
+    gem 'childprocess'
 end
 
 group :test do
     gem 'selenium-webdriver'
     gem 'capybara'
+    gem 'growl'
 end
 
 group :production do
