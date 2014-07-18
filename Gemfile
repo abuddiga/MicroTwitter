@@ -6,6 +6,7 @@ gem 'rails', '4.1.1'
 # gem 'pg'
 gem 'bootstrap-sass', '2.3.2.0'
 gem 'sprockets', '2.11.0'
+gem 'bcrypt'
 
 # Use sqlite3 for development only
 group :development, :test do
