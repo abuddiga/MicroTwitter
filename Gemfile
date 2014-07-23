@@ -22,6 +22,7 @@ group :test do
     gem 'selenium-webdriver'
     gem 'capybara'
     gem 'growl'
+    gem 'factory_girl_rails'
 end
 
 group :production do
