@@ -25,6 +25,15 @@ describe "Authentication" do
 			end
 		end
 
+		describe "retains form info on invalid signin" do
+			before do
+				fill_in "Email", with: "user@example.com"
+				click_button "Sign In"
+			end
+
+			it { should have_field('Email', with: 'user@example.com') }
+		end
+
 		describe "with valid information" do
 			let(:user) { FactoryGirl.create(:user) }
 			before { valid_signin user }

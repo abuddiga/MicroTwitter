@@ -21,6 +21,19 @@ describe "User pages" do
 			end
 		end
 
+		describe "retains form info on invalid signup" do
+			before do
+				fill_in "Name", 				with: "Example User"
+				fill_in "Email", 				with: "user@example.com"
+				fill_in "Password", 		with: "foobar"
+				fill_in "Confirmation", with: "barfoo"
+				click_button submit
+			end
+
+			it { should have_field('Name', with: 'Example User') }
+			it { should have_field('Email', with: 'user@example.com') }
+		end
+
 		describe "valid signup" do
 			before do
 				fill_in "Name", 				with: "Example User"
