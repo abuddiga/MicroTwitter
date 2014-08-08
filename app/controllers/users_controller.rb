@@ -1,7 +1,9 @@
 class UsersController < ApplicationController
 
-  before_action :signed_in_user, only: [:edit, :update]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :signed_in_user, only: [:edit, :update, :index, :destroy]
+  before_action :correct_user,   only: [:edit, :update]
+  before_action :admin_user,     only: :destroy
+  before_action :new_user,       only: [:new, :create]
 
   def new
   	@user = User.new
@@ -35,9 +37,19 @@ class UsersController < ApplicationController
   end
 
   def index
+    @users = User.paginate(page: params[:page])
   end
 
   def destroy
+    @user = User.find(params[:id])
+    if current_user?(@user) # assumes 'destroy' method cannot be invoked by regular users on themselves
+      flash[:notice] = "You can't delete your admin profile."
+      redirect_to root_url
+    else
+      @user.destroy
+      flash[:success] = "User deleted."
+      redirect_to users_url
+    end
   end
 
 
@@ -58,5 +70,13 @@ class UsersController < ApplicationController
     def correct_user
       @user = User.find(params[:id])
       redirect_to(root_url) unless current_user?(@user)
+    end
+
+    def admin_user
+      redirect_to(root_url) unless current_user.admin?
+    end
+
+    def new_user
+      redirect_to(root_url) if signed_in?
     end
 end

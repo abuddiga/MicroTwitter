@@ -39,6 +39,7 @@ describe "Authentication" do
 			before { sign_in user }
 
 			it { should have_title(user.name) }
+			it { should have_link('Users', href: users_path) }
 			it { should have_link('Profile', href: user_path(user)) }
 			it { should have_link('Settings', href: edit_user_path(user)) }
 			it { should have_link('Sign Out', href: signout_path) }
@@ -53,6 +54,44 @@ describe "Authentication" do
 
 	describe "authorization" do
 
+		describe "as non-admin user" do
+			let(:user) { FactoryGirl.create(:user) }
+			let(:non_admin) { FactoryGirl.create(:user) }
+
+			before { sign_in non_admin, no_capybara: true }
+
+			describe "submitting a DELETE request to the Users#action" do
+				before { delete user_path(user) }
+				specify { expect(response).to redirect_to(root_url) }
+			end
+		end
+
+		describe "as admin user" do
+			let(:admin) { FactoryGirl.create(:admin) }
+			before { sign_in admin, no_capybara: true }
+
+			describe "when attempting to delete themselves" do
+				before { delete user_path(admin) }
+				specify { expect(response).to redirect_to(root_url) }
+			end
+		end
+
+		describe "for signed-in users" do
+			let(:user) { FactoryGirl.create(:user) }
+			before { sign_in user }
+
+			describe "when attempting to visit 'new' page" do
+				before { visit new_user_path }
+				it { should have_title('') } # redirected to home page
+				it { should have_content('home page') }
+			end
+
+			describe "when attempting to visit 'create' page" do
+				before { put user_path(user) }
+				it { should have_title('') } # redirected to home page
+			end
+		end
+
 		describe "for non-signed-in users" do
 			let(:user) { FactoryGirl.create(:user) }
 
@@ -65,7 +104,23 @@ describe "Authentication" do
 				end
 
 				describe "after signing in" do
-					it { should have_title("Edit User") }
+					it "should render the desired protected page" do
+						expect(page).to have_title("Edit User")
+					end
+
+					describe "when signing in again" do
+						before do
+							click_link "Sign Out"
+							visit signin_path
+							fill_in "Email", with: user.email
+							fill_in "Password", with: user.password
+							click_button "Sign In"
+						end
+
+						it "should render the default (profile) page" do
+							expect(page).to have_title(user.name)
+						end
+					end
 				end
 			end
 
@@ -79,6 +134,11 @@ describe "Authentication" do
 				describe "submitting to the update action" do
 					before { patch user_path(user) }
 					specify { expect(response).to redirect_to signin_path }
+				end
+
+				describe "visiting the user index" do
+					before { visit users_path }
+					it { should have_title('Sign In') }
 				end
 			end
 		end
