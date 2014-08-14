@@ -3,7 +3,6 @@ source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.1'
-# gem 'pg'
 gem 'bootstrap-sass', '2.3.2.0'
 gem 'sprockets', '2.11.0'
 gem 'bcrypt'
@@ -15,6 +14,7 @@ gem 'bootstrap-will_paginate'
 group :development, :test do
     gem 'sqlite3'
     gem 'rspec-rails'
+    gem 'rspec-its', '~> 1.0.0.pre'
     gem 'guard-rspec'
     gem 'spork-rails'
     gem 'guard-spork'
@@ -65,4 +65,3 @@ gem 'spring',        group: :development
 
 # Use debugger
 # gem 'debugger', group: [:development, :test]
-

@@ -21,7 +21,7 @@ describe "Authentication" do
 
 			describe "after visiting another page" do
 				before { click_link "Help" }
-				it { should_not have_error_message('Invalid') }
+				it { should_not have_selector('div.alert.alert-error') }
 			end
 		end
 
@@ -83,7 +83,6 @@ describe "Authentication" do
 			describe "when attempting to visit 'new' page" do
 				before { visit new_user_path }
 				it { should have_title('') } # redirected to home page
-				it { should have_content('home page') }
 			end
 
 			describe "when attempting to visit 'create' page" do
@@ -139,6 +138,18 @@ describe "Authentication" do
 				describe "visiting the user index" do
 					before { visit users_path }
 					it { should have_title('Sign In') }
+				end
+			end
+
+			describe "in the Microposts controller" do
+				describe "submitting to the create action" do
+					before { post microposts_path }
+					specify { expect(response).to redirect_to(signin_path) }
+				end
+
+				describe "submitting to the destroy action" do
+					before { delete micropost_path(FactoryGirl.create(:micropost)) }
+					specify { expect(response).to redirect_to(signin_path) }
 				end
 			end
 		end
